@@ -4,6 +4,8 @@ import { AuthService } from './auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UsersModule } from 'src/users/users.module';
 import { UsersService } from 'src/users/users.service';
+import { MailerModule } from 'src/mailer/mailer.module';
+import { AuthGuard } from './auth.guard';
 
 @Module({
     imports: [
@@ -12,8 +14,10 @@ import { UsersService } from 'src/users/users.service';
             global: true,
             secret: process.env.JWT_SECRET,
         }),
+        MailerModule
     ],
     controllers: [AuthController],
-    providers: [AuthService, UsersService],
+    providers: [AuthService, UsersService, AuthGuard],
+    exports: []
 })
 export class AuthModule {}
