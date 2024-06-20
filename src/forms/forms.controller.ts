@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, Query } from '@nestjs/common';
 import { FormsService } from './forms.service';
 import { Prisma } from '@prisma/client';
 import { AuthGuard } from '../auth/auth.guard';
@@ -15,8 +15,8 @@ export class FormsController {
     }
 
     @Get()
-    findAll() {
-        return this.formsService.findAll();
+    findAll(@Query("userId") userId: string) {
+        return this.formsService.findAll(+userId);
     }
 
     @Get(':id')

@@ -21,12 +21,42 @@ export class FormsService {
         });
     }
 
-    async findAll() {
-        return this.databaseService.form.findMany({});
+    async findAll(userId: number) {
+        const whereOption: { authorId?: number } = {};
+
+        if (userId) whereOption.authorId = userId;
+
+        return this.databaseService.form.findMany({
+            where: whereOption,
+            select: {
+                tests: true,
+                createdAt: true,
+                id: true,
+                title: true,
+            },
+        });
     }
 
     async findOne(id: number) {
-        const form = this.databaseService.form.findUnique({ where: { id } });
+        const form = this.databaseService.form.findUnique({
+            where: { id },
+            select: {
+                tests: true,
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                        createdAt: true,
+                        updatedAt: true,
+                    },
+                },
+                comments: true,
+                createdAt: true,
+                id: true,
+                history: true,
+                title: true,
+            },
+        });
 
         if (!form) throw new NotFoundException('Form not found');
 
