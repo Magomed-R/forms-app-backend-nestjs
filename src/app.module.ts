@@ -6,6 +6,10 @@ import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MailerModule } from './mailer/mailer.module';
+import { CommentsModule } from './comments/comments.module';
+import { TestsModule } from './tests/tests.module';
+import { HistoryModule } from './history/history.module';
+import { AnswersModule } from './answers/answers.module';
 
 @Module({
     imports: [
@@ -13,9 +17,13 @@ import { MailerModule } from './mailer/mailer.module';
         DatabaseModule,
         UsersModule,
         AuthModule,
-        MailerModule
+        MailerModule,
+        CommentsModule,
+        TestsModule,
+        AnswersModule,
+        HistoryModule,
     ],
     providers: [DatabaseService],
-    controllers: [AppController]
+    controllers: [AppController],
 })
 export class AppModule {}

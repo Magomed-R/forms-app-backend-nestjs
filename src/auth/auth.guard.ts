@@ -7,7 +7,6 @@ export class AuthGuard implements CanActivate {
     constructor(private readonly JwtService: JwtService) {}
 
     async canActivate(context: ExecutionContext) {
-        const res: Response = context.switchToHttp().getResponse();
         const req: Request = context.switchToHttp().getRequest();
 
         if (!req.headers.authorization) throw new UnauthorizedException('Authorization token required');
@@ -18,11 +17,11 @@ export class AuthGuard implements CanActivate {
 
         try {
             const payload = await this.JwtService.verify(token);
-
-            req.body.id = payload.id;
+            
+            req.body.user = payload;
 
             return true;
-        } catch (e) {
+        } catch (error) {
             throw new BadRequestException('Invalid token');
         }
     }

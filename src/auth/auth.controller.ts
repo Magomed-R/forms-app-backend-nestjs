@@ -1,9 +1,7 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Response } from 'express';
 import { MailerService } from 'src/mailer/mailer.service';
 import authDto from './entities/authDto';
-
 
 @Controller('auth')
 export class AuthController {
@@ -13,17 +11,18 @@ export class AuthController {
     ) {}
 
     @Post('register')
-    async register(@Body() authDto: authDto, @Res() res: Response) {
-        return this.authService.register(authDto, res);
+    async register(@Body() authDto: authDto) {
+        return this.authService.register(authDto);
     }
 
     @Post('login')
-    async login(@Body() authDto: authDto, @Res() res: Response) {
-        return this.authService.login(authDto, res)
+    async login(@Body() authDto: authDto) {
+        return this.authService.login(authDto);
     }
 
+    @HttpCode(200)
     @Post('sendcode')
-    async sendCode(@Body() mailDto: { mail: string }, @Res() res: Response) {
-        return this.mailerService.sendCode(mailDto.mail, res);
+    async sendCode(@Body() mailDto: { mail: string }) {
+        return this.mailerService.sendCode(mailDto.mail);
     }
 }

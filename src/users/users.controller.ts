@@ -1,7 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, UseGuards } from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Get, Body, Param, Delete, UseGuards, ForbiddenException } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Prisma } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
@@ -13,13 +11,16 @@ export class UsersController {
         return this.usersService.findAll();
     }
 
-    @Get(':id') 
+    @Get(':id')
     findOne(@Param('id') id: string) {
         return this.usersService.findOne(+id);
     }
 
+    @UseGuards(AuthGuard)
     @Delete(':id')
-    remove(@Param('id') id: string) {
+    remove(@Param('id') id: string, @Body() idDto: { id: number | string }) {
+        if (id !== String(idDto.id)) throw new ForbiddenException('This is not your account');
+
         return this.usersService.remove(+id);
     }
 }

@@ -51,12 +51,12 @@ model Test {
 }
 
 model Answer {
-    id       Int     @id @unique @default(autoincrement())
-    answer   String
-    is_right Boolean
-    number   Int
-    test     Test    @relation(fields: [testId], references: [id])
-    testId   Int
+    id      Int     @id @unique @default(autoincrement())
+    answer  String 
+    isRight Boolean
+    number  Int
+    test    Test    @relation(fields: [testId], references: [id])
+    testId  Int
 }
 
 model History {
@@ -70,10 +70,9 @@ model History {
 }
 
 model HistoryAnswer {
-    id       Int     @id @unique @default(autoincrement())
-    answer   String
-    is_right Boolean
-
+    id        Int     @id @unique @default(autoincrement())
+    answer    String
+    isRight  Boolean
     history   History @relation(fields: [historyId], references: [id])
     historyId Int
     test      Test?   @relation(fields: [testId], references: [id])

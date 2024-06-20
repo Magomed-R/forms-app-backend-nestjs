@@ -15,6 +15,12 @@ export class UsersService {
             select: {
                 password: false,
                 mail: false,
+                id: true,
+                username: true,
+                comments: true,
+                createdAt: true,
+                forms: true,
+                history: true,
             },
         });
     }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { DatabaseService } from 'src/database/database.service';
 import * as crypto from 'crypto';
@@ -21,8 +21,8 @@ export class MailerService {
         });
     }
 
-    async sendCode(mail: string, res: Response) {
-        if (!this.validateMail(mail)) return res.status(400).json({ message: 'Invalid mail' });
+    async sendCode(mail: string) {
+        if (!this.validateMail(mail)) throw new BadRequestException('Invalid mail');
 
         const code = crypto.randomBytes(2).toString('hex');
 
@@ -49,8 +49,6 @@ export class MailerService {
             subject: 'Authorization code',
             html: `Do not share your authorization code with anyone: <div style='display: flex; justify-content: center; align-items: center; height: 80px; background: #0003'><b style='text-align: center; font-size: 40px;'>${code}</b></div>`,
         });
-
-        return res.sendStatus(200);
     }
 
     validateMail(mail: string) {
