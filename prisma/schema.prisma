@@ -22,6 +22,8 @@ model User {
 model Form {
     id        Int       @id @unique @default(autoincrement())
     title     String
+    open      Boolean   @default(true)
+    ready     Boolean   @default(false)
     author    User?     @relation(fields: [authorId], references: [id])
     authorId  Int?
     createdAt DateTime  @default(now())
@@ -52,9 +54,8 @@ model Test {
 
 model Answer {
     id      Int     @id @unique @default(autoincrement())
-    answer  String 
+    answer  String
     isRight Boolean
-    number  Int
     test    Test    @relation(fields: [testId], references: [id])
     testId  Int
 }
@@ -72,7 +73,7 @@ model History {
 model HistoryAnswer {
     id        Int     @id @unique @default(autoincrement())
     answer    String
-    isRight  Boolean
+    isRight   Boolean
     history   History @relation(fields: [historyId], references: [id])
     historyId Int
     test      Test?   @relation(fields: [testId], references: [id])

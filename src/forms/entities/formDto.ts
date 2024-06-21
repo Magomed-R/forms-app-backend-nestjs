@@ -7,7 +7,9 @@ export default interface formDto {
     title: string;
     authorId: number;
     tests?: ITest[];
+    open?: boolean;
+    ready?: boolean;
     createdAt?: Date;
-    history?: historyDto[]
-    comments?: commentDto[]
+    history?: historyDto[];
+    comments?: commentDto[];
 }

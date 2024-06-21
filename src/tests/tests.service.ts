@@ -57,7 +57,9 @@ export class TestsService {
 
         if (form.authorId !== deleteTestDto.user.id) throw new ForbiddenException('You are not the creator of this form');
 
+        await this.databaseService.answer.deleteMany({ where: { testId: id } });
         await this.databaseService.test.delete({ where: { id } });
+
         return;
     }
 }

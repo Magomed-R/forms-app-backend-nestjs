@@ -9,7 +9,7 @@ export class FormsService {
     constructor(private readonly databaseService: DatabaseService) {}
 
     async create(formDto: formDto) {
-        const { title, authorId } = formDto;
+        const { title, authorId, open } = formDto;
 
         if (!title) throw new BadRequestException('All fields are required');
 
@@ -17,19 +17,20 @@ export class FormsService {
             data: {
                 title,
                 authorId,
+                open: open || true,
             },
         });
     }
 
     async findAll(userId: number) {
-        const whereOption: { authorId?: number } = {};
+        const whereOption: { authorId?: number; open?: boolean } = { open: true };
 
         if (userId) whereOption.authorId = userId;
 
         return this.databaseService.form.findMany({
             where: whereOption,
             select: {
-                tests: true,
+                _count: true,
                 createdAt: true,
                 id: true,
                 title: true,
@@ -41,7 +42,18 @@ export class FormsService {
         const form = this.databaseService.form.findUnique({
             where: { id },
             select: {
-                tests: true,
+                tests: {
+                    select: {
+                        answers: {
+                            select: {
+                                isRight: false,
+                                answer: true,
+                                id: true,
+                            },
+                        },
+                        question: true,
+                    },
+                },
                 author: {
                     select: {
                         id: true,
@@ -64,22 +76,28 @@ export class FormsService {
     }
 
     async update(id: number, updateFormDto: payloadDto & Prisma.FormUpdateInput) {
+        const { title, open, user, ready } = updateFormDto;
+
+        if (id === undefined || title === undefined || open === undefined) throw new BadRequestException('All fields are required');
+
         const form = await this.databaseService.form.findUnique({ where: { id } });
 
         if (!form) throw new NotFoundException('Form not found');
+        if (form.authorId !== user.id) throw new ForbiddenException('Your not author of this form');
 
-        if (form.authorId !== updateFormDto.user.id) throw new ForbiddenException('Your not author of this form');
-
-        return this.databaseService.form.update({ where: { id }, data: { title: updateFormDto.title } });
+        return this.databaseService.form.update({ where: { id }, data: { title, open, ready: ready || false } });
     }
 
     async remove(id: number, userId: number) {
+        if (!id) throw new BadRequestException('All fields are required');
+
         const form = await this.databaseService.form.findUnique({ where: { id } });
 
         if (!form) throw new NotFoundException('Form not found');
-
         if (form.authorId !== userId) throw new ForbiddenException('Your not author of this form');
 
+        await this.databaseService.answer.deleteMany({ where: { test: { formId: id } } });
+        await this.databaseService.test.deleteMany({ where: { formId: id } });
         await this.databaseService.form.delete({ where: { id } });
 
         return;

@@ -10,8 +10,8 @@ export class FormsController {
 
     @UseGuards(AuthGuard)
     @Post()
-    create(@Body() formDto: { title: string; user: { id: number } }) {
-        return this.formsService.create({ title: formDto.title, authorId: formDto.user.id });
+    create(@Body() formDto: { title: string; user: { id: number }, public?: boolean }) {
+        return this.formsService.create({ title: formDto.title, authorId: formDto.user.id, open: formDto.public });
     }
 
     @Get()
